@@ -11,10 +11,9 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-from utils.cnn_util import get_model
+from utils.cnn_util import get_model, get_optimizer, get_criterion
 from utils.epoch_utils import train_epoch, test_epoch
 from utils.hyper_class import HyperClass
-
 
 # %%
 def main_func(hyper: HyperClass):
@@ -35,7 +34,7 @@ def main_func(hyper: HyperClass):
     # %% initialize values for training
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(hyper.seed)
-    criterion = nn.CrossEntropyLoss()
+    criterion = get_criterion(hyper)
 
     # %%
     # initialize loader
@@ -49,15 +48,8 @@ def main_func(hyper: HyperClass):
     model.to(device)
 
     # choose optimizer according to hyper.optimizer
-    if hyper.optimizer == "adamw":
-        optimizer = optim.AdamW(model.parameters(), lr=hyper.learning_rate)
-    elif hyper.optimizer == "adadelta":
-        optimizer = optim.Adadelta(model.parameters(), lr=hyper.learning_rate)
-    elif hyper.optimizer == "adagrad":
-        optimizer = optim.Adagrad(model.parameters(), lr=hyper.learning_rate)
-    elif hyper.optimizer == "sgd":
-        optimizer = optim.SGD(model.parameters(), lr=hyper.learning_rate,
-                              momentum=0.9, weight_decay=5e-4)
+    optimizer = get_optimizer(hyper, model)
+
     # initialize data record dict
     history_full = {'epoch': [],
                     'train_loss': [], 'train_acc': [], 'train_precision': [], 'train_recall': [], 'train_f1': [],

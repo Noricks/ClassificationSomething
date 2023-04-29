@@ -18,7 +18,7 @@ class HyperClass(object):
                  optimizer="sgd",
                  exp_path_name="cnn2",
                  base_path="/mnt/emc01/zeyu/mlcw/exp/",
-                 network_name="I"
+                 network_name="resnet-18"
                  ):
         self.network_name = network_name
         self.seed = seed
