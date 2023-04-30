@@ -5,6 +5,7 @@ from utils.hyper_class import HyperClass
 from torchvision import transforms
 from datasets.CIFAR import CIFAR
 from datasets.Mushroom import Mushroom
+from datasets.Bird import Bird
 from torchvision.models import resnet, efficientnet, vision_transformer
 
 # %%
@@ -72,5 +73,7 @@ def get_dataset(hyper: HyperClass):
         return CIFAR().get_dataset(hyper)
     elif hyper.dataset == "Mushroom":
         return Mushroom().get_dataset(hyper)
+    elif hyper.dataset == "Bird":
+        return Bird().get_dataset(hyper)
     else:
         raise ValueError("Dataset not found")
