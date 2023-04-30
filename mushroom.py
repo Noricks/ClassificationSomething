@@ -26,7 +26,7 @@ def main_func(hyper: HyperClass):
 
     # %%
     # initialize loader
-    train_loader = DataLoader(train_dataset, batch_size=hyper.batch_size, num_workers=hyper.num_workers)
+    train_loader = DataLoader(train_dataset, batch_size=hyper.batch_size, num_workers=hyper.num_workers, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=hyper.batch_size, num_workers=int(hyper.num_workers / 2))
 
     # get model from the name
@@ -47,15 +47,13 @@ def main_func(hyper: HyperClass):
     time_start = time.time()
     for epoch in tqdm(range(hyper.num_epochs)):
         # training
-        train_loss, train_acc, train_precision, train_recall, train_f1 = \
-            train_epoch(model, device, train_loader, criterion, optimizer)
+        train_loss, train_acc = train_epoch(model, device, train_loader, criterion, optimizer)
         # testing
-        test_loss, test_acc, test_precision, test_recall, test_f1 = \
-            test_epoch(model, device, test_loader, criterion)
+        test_loss, test_acc = test_epoch(model, device, test_loader, criterion)
 
         # print info
         print(
-            "Epoch:{}/{} AVG Training Loss:{:.3f} AVG test Loss:{:.3f} AVG Training Acc {:.2f} % AVG test Acc {:.2f} %".format(
+            "Epoch:{}/{} Train Loss: {:.3f} Test Loss: {:.3f} Train Acc {:.2f} % Test Acc {:.2f} %".format(
                 epoch,
                 hyper.num_epochs,
                 train_loss,
@@ -67,20 +65,17 @@ def main_func(hyper: HyperClass):
         history_full['epoch'].append(epoch)
         history_full['train_loss'].append(train_loss)
         history_full['train_acc'].append(train_acc)
-        history_full['train_precision'].append(list(train_precision))
-        history_full['train_recall'].append(list(train_recall))
-        history_full['train_f1'].append(list(train_f1))
 
         history_full['test_loss'].append(test_loss)
         history_full['test_acc'].append(test_acc)
-        history_full['test_precision'].append(list(test_precision))
-        history_full['test_recall'].append(list(test_recall))
-        history_full['test_f1'].append(list(test_f1))
-
     # save the value
     json.dump(history_full, open(Path(hyper.exp_path).joinpath("train_test.json"), "w"))
     time_end = time.time()
-    print('Total Time', time_end - time_start)
+    time_period = time_end - time_start
+    # time to h-m-s
+    m, s = divmod(time_period, 60)
+    h, m = divmod(m, 60)
+    print('Total Time {} h {} m {:.2f} s'.format(h, m, s))
 
     # %%
     # get the epoch of best testing accuracy
@@ -91,9 +86,6 @@ def main_func(hyper: HyperClass):
         'epoch': int(best_test_epoch),
         'train_acc': history_full['train_acc'][best_test_epoch],
         'test_acc': history_full['test_acc'][best_test_epoch],
-        'test_precision': list(history_full['test_precision'][best_test_epoch]),
-        'test_recall': list(history_full['test_recall'][best_test_epoch]),
-        'test_f1': list(history_full['test_f1'][best_test_epoch]),
     }
     # %%
     # save the recorded data to file
@@ -104,13 +96,13 @@ def main_func(hyper: HyperClass):
 if __name__ == '__main__':
     # Example
     optimizers = ["adamw"]
-    lrs = [0.01]
+    lrs = [1e-3]
     hypers = []
     for o in optimizers:
         for l in lrs:
             hypers.append(
-                HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=5,
-                           base_path="./exp_t", network_name="resnet-18", batch_size=32, num_workers=4))
+                HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=50,
+                           base_path="./exp_t", network_name="resnet-34", batch_size=32, num_workers=4, dataset="Mushroom"))
 
     for h in hypers:
         h.save()

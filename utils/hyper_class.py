@@ -18,7 +18,9 @@ class HyperClass(object):
                  optimizer="sgd",
                  exp_path_name="cnn2",
                  base_path="/mnt/emc01/zeyu/mlcw/exp/",
-                 network_name="resnet-18"
+                 network_name="resnet-18",
+                 dataset="CIFAR-10",
+                 class_num=10,
                  ):
         self.network_name = network_name
         self.seed = seed
@@ -29,6 +31,8 @@ class HyperClass(object):
         self.optimizer = optimizer
         self.exp_path_name = exp_path_name
         self.base_path = base_path
+        self.dataset = dataset
+        self.class_num = class_num
         self.exp_path = str(Path(base_path).joinpath(exp_path_name))
         # create dir for experiments
         os.makedirs(self.exp_path, exist_ok=True)

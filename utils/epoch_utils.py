@@ -1,6 +1,6 @@
 import torch
-from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
-
+# from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
+from sklearn.metrics import accuracy_score
 # %%
 def train_epoch(model, device, dataloader, loss_fn, optimizer):
     train_loss = 0.0
@@ -30,10 +30,7 @@ def train_epoch(model, device, dataloader, loss_fn, optimizer):
     predictions_cpu = predict_all.cpu()
     labels_cpu = labels_all.cpu()
     train_acc = accuracy_score(labels_cpu, predictions_cpu, normalize=True)
-    train_precision = precision_score(labels_cpu, predictions_cpu, average=None)
-    train_recall = recall_score(labels_cpu, predictions_cpu, average=None)
-    train_f1 = f1_score(labels_cpu, predictions_cpu, average=None)
-    return train_loss, train_acc, train_precision, train_recall, train_f1
+    return train_loss, train_acc
 
 
 # %%
@@ -63,11 +60,7 @@ def val_epoch(model, device, dataloader, loss_fn):
         predictions_cpu = predict_all.cpu()
         labels_cpu = labels_all.cpu()
         val_acc = accuracy_score(labels_cpu, predictions_cpu, normalize=True)
-        val_precision = precision_score(labels_cpu, predictions_cpu, average=None)
-        val_recall = recall_score(labels_cpu, predictions_cpu, average=None)
-        val_f1 = f1_score(labels_cpu, predictions_cpu, average=None)
-
-    return val_loss, val_acc, val_precision, val_recall, val_f1
+    return val_loss, val_acc
 
 
 # %%
