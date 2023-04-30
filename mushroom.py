@@ -91,7 +91,7 @@ def main_func(hyper: HyperClass):
     # save the recorded data to file
     json.dump(presentation, open(Path(hyper.exp_path).joinpath("pre.json"), "w"))
 
-
+    return presentation
 # %%
 if __name__ == '__main__':
     # Example
@@ -102,8 +102,24 @@ if __name__ == '__main__':
         for l in lrs:
             hypers.append(
                 HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=50,
-                           base_path="./exp_t", network_name="resnet-34", batch_size=32, num_workers=4, dataset="Mushroom"))
+                           base_path="./exp_t", network_name="vit_b_16", batch_size=32, num_workers=4, dataset="Mushroom"))
 
     for h in hypers:
         h.save()
         main_func(h)
+
+    # import optuna
+    #
+    # def objective(trial):
+    #     l = trial.suggest_float('learning_rate', 1e-5, 1e-1)
+    #     o = trial.suggest_categorical('optimizer', ["adamw", "sgd"])
+    #     b = trial.suggest_int('batch_size', 16, 64)
+    #     n = trial.suggest_categorical('network_name', ["resnet-18", "resnet-34", "resnet-50"])
+    #     h = HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}_b{}_n{}".format(o, l, b, n), num_epochs=50,
+    #                       base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset="Mushroom")
+    #     h.save()
+    #     presentation = main_func(h)
+    #     return presentation['test_acc']
+    #
+    # study = optuna.create_study(direction='maximize')
+    # study.optimize(objective, n_trials=2)

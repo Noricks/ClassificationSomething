@@ -12,7 +12,7 @@ matrix = np.zeros((4, 9))
 index = 0
 for i, h in enumerate([1, 2, 3, 4]):
     # index = index + 1
-    for j, c in enumerate([16, 32, 64 ,128, 256, 512, 1024, 1536, 2048]):
+    for j, c in enumerate([16, 32, 64, 128, 256, 512, 1024, 1536, 2048]):
         print(i, j, "mlp_h{}_c{}/pre.json".format(h, c))
         data = json.load(open(Path("/mnt/emc01/zeyu/mlcw/exp/")
                               .joinpath("mlp_h{}_c{}/pre.json".format(h, c)),
@@ -39,11 +39,11 @@ sns.heatmap(matrix, cmap=cmap,
             square=True,
             # linewidths=.5,
             cbar=False, annot=True, fmt='.4g', vmin=0.32,
-            yticklabels=[1, 2, 3, 4], xticklabels=[16, 32, 64 ,128, 256, 512, 1024, 1536, 2048]
+            yticklabels=[1, 2, 3, 4], xticklabels=[16, 32, 64, 128, 256, 512, 1024, 1536, 2048]
             )
 # set labels
-plt.xlabel("Num of Channels",fontsize=30)
-plt.ylabel("Num of Hidden Layers",fontsize=30)
+plt.xlabel("Num of Channels", fontsize=30)
+plt.ylabel("Num of Hidden Layers", fontsize=30)
 
 # set ticks
 plt.xticks(fontsize=25)
