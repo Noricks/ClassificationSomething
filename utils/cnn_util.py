@@ -6,7 +6,7 @@ from torchvision import transforms
 from datasets.CIFAR import CIFAR
 from datasets.Mushroom import Mushroom
 from torchvision.models import resnet, efficientnet, vision_transformer
-
+from mlp_mixer_pytorch import MLPMixer
 # %%
 def get_model(hyper: HyperClass):
     name = hyper.network_name
@@ -33,11 +33,16 @@ def get_model(hyper: HyperClass):
         model._fc = nn.Linear(1280, class_num)
     elif name == "vit_b_16":
         model = vision_transformer.vit_b_16(weights=vision_transformer.ViT_B_16_Weights.DEFAULT)
-        # freeze all layers except the MLPHead
-        for param in model.parameters():
-            param.requires_grad = False
-        model.heads.requires_grad_ = True
         model.head = nn.Linear(768, class_num)
+    elif name == "mixer_b_16":
+        model = MLPMixer(
+            image_size=224,
+            patch_size=4,
+            dim=32,
+            depth=4,
+            num_classes=class_num,
+            channels=3
+        )
     else:
         # Other Networks could be modified from these two networks
         # To make it simple they are not list here

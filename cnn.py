@@ -110,7 +110,7 @@ if __name__ == '__main__':
         for l in lrs:
             hypers.append(
                 HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=5,
-                           base_path="./exp_t", network_name="resnet-18", batch_size=32, num_workers=4))
+                           base_path="./exp_t", network_name="mixer_b_16", batch_size=32, num_workers=4, ))
 
     for h in hypers:
         h.save()
