@@ -1,0 +1,1 @@
+{"network_name": "vit_b_16", "seed": 20124861, "num_epochs": 50, "batch_size": 32, "learning_rate": 0.001, "num_workers": 4, "optimizer": "adamw", "exp_path_name": "cnn_adamw_l0.001", "base_path": "./exp_t", "dataset": "Bird", "class_num": 10, "exp_path": "exp_t/cnn_adamw_l0.001"}
