@@ -1,6 +1,8 @@
 import torch
 # from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
 from sklearn.metrics import accuracy_score
+
+
 # %%
 def train_epoch(model, device, dataloader, loss_fn, optimizer):
     train_loss = 0.0

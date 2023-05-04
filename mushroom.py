@@ -37,6 +37,7 @@ def main_func(hyper: HyperClass):
 
     # choose optimizer according to hyper.optimizer
     optimizer = get_optimizer(hyper, model)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=hyper.lr_step_size, gamma=hyper.lr_gamma)
 
     # initialize data record dict
     history_full = {'epoch': [],
@@ -68,8 +69,10 @@ def main_func(hyper: HyperClass):
 
         history_full['test_loss'].append(test_loss)
         history_full['test_acc'].append(test_acc)
-    # save the value
-    json.dump(history_full, open(Path(hyper.exp_path).joinpath("train_test.json"), "w"))
+        # save the value
+        if epoch % 10 == 0:
+            json.dump(history_full, open(Path(hyper.exp_path).joinpath("train_test.json"), "w"))
+
     time_end = time.time()
     time_period = time_end - time_start
     # time to h-m-s
@@ -95,31 +98,41 @@ def main_func(hyper: HyperClass):
 # %%
 if __name__ == '__main__':
     # Example
-    optimizers = ["adamw"]
-    lrs = [1e-3]
-    hypers = []
-    for o in optimizers:
-        for l in lrs:
-            hypers.append(
-                HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=50,
-                           base_path="./exp_t", network_name="mixer_b_16", batch_size=32, num_workers=4, dataset="Mushroom"))
+    # optimizers = ["adamw"]
+    # lrs = [1e-3]
+    # hypers = []
+    # n = "resnet-18"
+    # b = 128
+    # d = "Mushroom"
+    # for o in optimizers:
+    #     for l in lrs:
+    #         hypers.append(
+    #             HyperClass(optimizer=o, learning_rate=l, exp_path_name="{}_{}_l{}_b{}_n{}_{}".format(n, o, l, b, n, d),
+    #                        num_epochs=50,
+    #                        base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset=d,
+    #                        lr_step_size=100, lr_gamma=0.1))
 
-    for h in hypers:
-        h.save()
-        main_func(h)
 
-    # import optuna
-    #
-    # def objective(trial):
-    #     l = trial.suggest_float('learning_rate', 1e-5, 1e-1)
-    #     o = trial.suggest_categorical('optimizer', ["adamw", "sgd"])
-    #     b = trial.suggest_int('batch_size', 16, 64)
-    #     n = trial.suggest_categorical('network_name', ["resnet-18", "resnet-34", "resnet-50"])
-    #     h = HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}_b{}_n{}".format(o, l, b, n), num_epochs=50,
-    #                       base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset="Mushroom")
+    # for h in hypers:
     #     h.save()
-    #     presentation = main_func(h)
-    #     return presentation['test_acc']
-    #
-    # study = optuna.create_study(direction='maximize')
-    # study.optimize(objective, n_trials=2)
+    #     main_func(h)
+
+    import optuna
+    
+    
+    def objective(trial):
+        l = trial.suggest_float('learning_rate', 1e-5, 1e-1)
+        o = trial.suggest_categorical('optimizer', ["adamw"])
+        b = trial.suggest_int('batch_size', 16, 64)
+        n = trial.suggest_categorical('network_name', ["resnet-18", "resnet-34", "resnet-50", "efficientnet-b0"])
+        h = HyperClass(optimizer=o, learning_rate=l, exp_path_name="{}_{}_l{}_b{}_n{}".format(n, o, l, b, n), num_epochs=100,
+                          base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset="Mushroom")
+        h.save()
+        presentation = main_func(h)
+        return presentation['test_acc']
+    
+    study = optuna.create_study(
+        study_name='mushroom1',
+        storage='sqlite:///mushroom.db',
+        direction='maximize')
+    study.optimize(objective, n_trials=15)

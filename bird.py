@@ -95,31 +95,31 @@ def main_func(hyper: HyperClass):
 # %%
 if __name__ == '__main__':
     # Example
-    optimizers = ["adamw"]
-    lrs = [1e-3]
-    hypers = []
-    for o in optimizers:
-        for l in lrs:
-            hypers.append(
-                HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=50,
-                           base_path="./exp_t", network_name="vit_b_16", batch_size=32, num_workers=4, dataset="Bird"))
+    # optimizers = ["adamw"]
+    # lrs = [1e-3]
+    # hypers = []
+    # for o in optimizers:
+    #     for l in lrs:
+    #         hypers.append(
+    #             HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}".format(o, l), num_epochs=50,
+    #                        base_path="./exp_t", network_name="resnet-50", batch_size=64, num_workers=4, dataset="Bird", class_num=525))
 
-    for h in hypers:
-        h.save()
-        main_func(h)
-
-    # import optuna
-    #
-    # def objective(trial):
-    #     l = trial.suggest_float('learning_rate', 1e-5, 1e-1)
-    #     o = trial.suggest_categorical('optimizer', ["adamw", "sgd"])
-    #     b = trial.suggest_int('batch_size', 16, 64)
-    #     n = trial.suggest_categorical('network_name', ["resnet-18", "resnet-34", "resnet-50"])
-    #     h = HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}_b{}_n{}".format(o, l, b, n), num_epochs=50,
-    #                       base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset="Mushroom")
+    # for h in hypers:
     #     h.save()
-    #     presentation = main_func(h)
-    #     return presentation['test_acc']
-    #
-    # study = optuna.create_study(direction='maximize')
-    # study.optimize(objective, n_trials=2)
+    #     main_func(h)
+
+    import optuna
+    
+    def objective(trial):
+        l = trial.suggest_float('learning_rate', 1e-5, 1e-1)
+        o = trial.suggest_categorical('optimizer', ["adamw", "sgd"])
+        b = trial.suggest_int('batch_size', 16, 64)
+        n = trial.suggest_categorical('network_name', ["resnet-18", "resnet-34", "resnet-50"])
+        h = HyperClass(optimizer=o, learning_rate=l, exp_path_name="cnn_{}_l{}_b{}_n{}".format(o, l, b, n), num_epochs=50,
+                          base_path="./exp_t", network_name=n, batch_size=b, num_workers=4, dataset="Bird")
+        h.save()
+        presentation = main_func(h)
+        return presentation['test_acc']
+    
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, n_trials=2)

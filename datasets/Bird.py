@@ -53,9 +53,6 @@ class BirdDataSet(Dataset):
         self.classes.sort()
         self.classes_to_idx = {self.classes[i]: i for i in range(len(self.classes))}
 
-        # self.target_url = "https://www.kaggle.com/datasets/maysee/mushrooms-classification-common-genuss-images" \
-        #                   "/download?datasetVersionNumber=1"
-
         if self.train:
             self.train_data, self.train_labels = self.load_data()
         else:

@@ -21,6 +21,8 @@ class HyperClass(object):
                  network_name="resnet-18",
                  dataset="CIFAR-10",
                  class_num=10,
+                 lr_step_size=30,
+                 lr_gamma=0.1
                  ):
         self.network_name = network_name
         self.seed = seed
@@ -34,6 +36,8 @@ class HyperClass(object):
         self.dataset = dataset
         self.class_num = class_num
         self.exp_path = str(Path(base_path).joinpath(exp_path_name))
+        self.lr_step_size = lr_step_size
+        self.lr_gamma = lr_gamma
         # create dir for experiments
         os.makedirs(self.exp_path, exist_ok=True)
 
